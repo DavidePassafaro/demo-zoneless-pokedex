@@ -1,9 +1,37 @@
 <div class="app-container">
-  <header>Header</header>
+  <header>
+    <img class="pokemon-img" src="logo.png" alt="Pokemon" />
+    <span> at </span>
+    <img class="tinyconf-img" src="tinyco.png" alt="AngularTinyConf" />
+  </header>
 
   <main>
     <router-outlet />
   </main>
 
-  <footer>Footer</footer>
+  <footer>
+    <span>
+      Made by
+      <a href="https://www.linkedin.com/in/davide-passafaro/">
+        Davide Passafaro
+      </a>
+      .
+    </span>
+
+    <span>
+      This demo was also shown at
+
+      <a
+        href="https://www.youtube.com/watch?v=nVcerb1tOUA&ab_channel=AngularTinyConf"
+      >
+        AngularTinyConf2024
+        <img
+          class="tinyconf-img"
+          src="tinyco.png"
+          alt="AngularTinyConf"
+          width="30px"
+        />
+      </a>
+    </span>
+  </footer>
 </div>
