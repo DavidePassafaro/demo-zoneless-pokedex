@@ -4,8 +4,11 @@ import {
   ElementRef,
   NgZone,
   OnInit,
+  Signal,
+  ViewChild,
   inject,
   signal,
+  viewChild,
 } from '@angular/core';
 import { PokemonService } from '../../services/pokemon/pokemon.service';
 import { PokemonCardComponent as PokemonCard } from '../../components/pokemon-card/pokemon-card.component';
@@ -37,6 +40,8 @@ import { first } from 'rxjs';
   `,
 })
 export class HomeComponent implements OnInit {
+  private searchbar: Signal<Searchbar> = viewChild(Searchbar);
+
   private elementRef: ElementRef = inject(ElementRef);
   private ngZone: NgZone = inject(NgZone);
   private changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
@@ -54,6 +59,10 @@ export class HomeComponent implements OnInit {
 
     this.ngZone.onStable.pipe(first()).subscribe(() => {
       this.logger('First Render');
+    });
+
+    this.ngZone.runOutsideAngular(() => {
+      this.initializeColorChange();
     });
   }
 
@@ -79,5 +88,35 @@ export class HomeComponent implements OnInit {
       loading: this.isLoading,
       pokemonLenght: this.pokemonList.length,
     });
+  }
+
+  private initializeColorChange(): void {
+    const colors = [
+      'green',
+      'red',
+      'rgb(1, 1, 126)',
+      'blue',
+      'rgb(135, 135, 135',
+      'rgb(40, 1, 50)',
+      'rgb(146, 153, 45)',
+      'rgb(126, 83, 1)',
+      'rgb(171, 83, 205)',
+      'rgb(191, 150, 51)',
+      'rgb(145, 49, 182)',
+      'rgb(126, 83, 1)',
+      'rgb(151, 108, 168)',
+      'rgb(83, 200, 205)',
+      'rgb(83, 141, 205)',
+    ];
+    let currentColorIndex = 0;
+
+    setInterval(() => {
+      currentColorIndex = (currentColorIndex + 1) % colors.length;
+
+      this.searchbar().elementRef.nativeElement.setAttribute(
+        'style',
+        `--highlight-color: ${colors[currentColorIndex]}`
+      );
+    }, 2000);
   }
 }

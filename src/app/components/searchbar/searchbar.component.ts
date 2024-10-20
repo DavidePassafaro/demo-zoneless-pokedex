@@ -1,4 +1,4 @@
-import { Component, model, output } from '@angular/core';
+import { Component, ElementRef, inject, model, output, Signal, viewChild } from '@angular/core';
 
 @Component({
   standalone: true,
@@ -11,12 +11,13 @@ import { Component, model, output } from '@angular/core';
       [value]="query()"
       (keydown.enter)="onSearch(input.value)"
     />
-
     <button type="submit" (click)="onSearch(input.value)">Search</button>
   `,
   styleUrl: './searchbar.component.scss',
 })
 export class SearchbarComponent {
+  public elementRef: ElementRef = inject(ElementRef);
+
   public query = model<string>('');
 
   public search = output<string>();
