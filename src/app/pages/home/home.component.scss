@@ -8,6 +8,16 @@
   max-width: 33.333333%;
   padding: 10px;
   box-sizing: border-box;
+
+  @media only screen and (max-width: 700px) {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+
+  @media only screen and (max-width: 570px) {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
 }
 
 .searchbar {
