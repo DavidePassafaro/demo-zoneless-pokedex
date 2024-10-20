@@ -11,24 +11,29 @@ header {
   align-items: center;
 
   span {
-    padding: 30px 20px 0;
+    padding: 10px 20px 0;
     font-family: fantasy;
     font-size: 28px;
   }
 
   .pokemon-img {
-    width: 200px;
+    height: 50px;
   }
 
   .tinyconf-img {
     width: 73px;
+  }
+
+  .codemotion-img {
+    padding: 10px 0;
+    height: 30px;
   }
 }
 
 main {
   width: 100%;
   max-width: 1024px;
-  padding: 30px 0;
+  padding-bottom: 30px;
   margin: 0 auto;
 }
 
@@ -36,6 +41,11 @@ footer {
   padding: 20px;
   text-align: center;
 
+  p {
+    margin-top: 10px;
+  }
+
+  p,
   span,
   a {
     display: flex;
@@ -43,8 +53,16 @@ footer {
     align-items: center;
   }
 
-  a,
-  img {
+  a {
+    display: inline-flex;
+  }
+
+  span a {
     padding-left: 5px;
+  }
+
+  p a,
+  p a img {
+    padding: 0 3px 0 5px;
   }
 }
