@@ -5,6 +5,8 @@ import {
   OnInit,
   Signal,
   ViewChild,
+  afterNextRender,
+  afterRender,
   inject,
   signal,
   viewChild,
@@ -25,12 +27,12 @@ import { first } from 'rxjs';
   template: `
     <azp-searchbar #seachbar class="searchbar" (search)="filterList($event)" />
     
-    @if (isLoading) {
+    @if (isLoading()) {
       <azp-loader />
     }
 
     <ol class="row">
-      @for (pokemon of pokemonList; track pokemon.id) {
+      @for (pokemon of pokemonList(); track pokemon.id) {
         <li class="col">
           <azp-pokemon-card [pokemon]="pokemon" />
         </li>
@@ -47,44 +49,42 @@ export class HomeComponent implements OnInit {
   private pokemonService: PokemonService = inject(PokemonService);
   protected getPokemon$ = this.pokemonService.getPokemon();
 
-  protected pokemonList: Pokemon[] = [];
-  protected isLoading: boolean = true;
+  protected pokemonList = signal<Pokemon[]>([]);
+  protected isLoading = signal<boolean>(true);
 
   constructor() {
-    this.ngZone.onMicrotaskEmpty.subscribe(() => {
+    afterRender(() => {
       this.logger('Render');
     });
 
-    this.ngZone.onStable.pipe(first()).subscribe(() => {
+    afterNextRender(() => {
       this.logger('First Render');
     });
 
-    this.ngZone.runOutsideAngular(() => {
-      this.initializeColorChange();
-    });
+    this.initializeColorChange();
   }
 
   ngOnInit(): void {
     this.pokemonService.getPokemon().subscribe((pokemonList) => {
-      this.isLoading = false;
-      this.pokemonList = pokemonList;
+      this.isLoading.set(false);
+      this.pokemonList.set(pokemonList);
     });
   }
 
   protected filterList(query: string): void {
-    this.isLoading = true;
-    this.pokemonList = [];
+    this.isLoading.set(true);
+    this.pokemonList.set([]);
 
     this.pokemonService.getPokemonByQuery(query).subscribe((pokemonList) => {
-      this.isLoading = false;
-      this.pokemonList = pokemonList;
+      this.isLoading.set(false);
+      this.pokemonList.set(pokemonList);
     });
   }
 
   private logger(message: string): void {
     console.log(message, {
-      loading: this.isLoading,
-      pokemonLenght: this.pokemonList.length,
+      loading: this.isLoading(),
+      pokemonLenght: this.pokemonList().length,
     });
   }
 
