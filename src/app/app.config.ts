@@ -11,8 +11,8 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(),
     // provideExperimentalCheckNoChangesForDebug({
-    //   // interval:2000,
-    //   useNgZoneOnStable: true,
+    //   interval: 2000,
+    //   // useNgZoneOnStable: true,
     //   exhaustive: true
     // }),
   ],
