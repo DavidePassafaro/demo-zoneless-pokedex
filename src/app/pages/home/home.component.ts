@@ -1,6 +1,8 @@
 import {
   ChangeDetectorRef,
   Component,
+  ElementRef,
+  NgZone,
   OnInit,
   inject,
   signal,
@@ -11,6 +13,7 @@ import { SearchbarComponent as Searchbar } from '../../components/searchbar/sear
 import { LoaderComponent as Loader } from '../../components/loader/loader.component';
 import { Pokemon } from '../../services/pokemon/pokemon.model';
 import { AsyncPipe } from '@angular/common';
+import { first } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -19,37 +22,62 @@ import { AsyncPipe } from '@angular/common';
   styleUrl: './home.component.scss',
   template: `
     <azp-searchbar #seachbar class="searchbar" (search)="filterList($event)" />
-
-    @if(pokemonList.length === 0){
-    <azp-loader />
+    
+    @if (isLoading) {
+      <azp-loader />
     }
 
     <ol class="row">
       @for (pokemon of pokemonList; track pokemon.id) {
-      <li class="col">
-        <azp-pokemon-card [pokemon]="pokemon" />
-      </li>
+        <li class="col">
+          <azp-pokemon-card [pokemon]="pokemon" />
+        </li>
       }
     </ol>
   `,
 })
 export class HomeComponent implements OnInit {
+  private elementRef: ElementRef = inject(ElementRef);
+  private ngZone: NgZone = inject(NgZone);
   private changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
 
   private pokemonService: PokemonService = inject(PokemonService);
   protected getPokemon$ = this.pokemonService.getPokemon();
 
   protected pokemonList: Pokemon[] = [];
+  protected isLoading: boolean = true;
+
+  constructor() {
+    this.ngZone.onMicrotaskEmpty.subscribe(() => {
+      this.logger('Render');
+    });
+
+    this.ngZone.onStable.pipe(first()).subscribe(() => {
+      this.logger('First Render');
+    });
+  }
 
   ngOnInit(): void {
     this.pokemonService.getPokemon().subscribe((pokemonList) => {
+      this.isLoading = false;
       this.pokemonList = pokemonList;
     });
   }
 
   protected filterList(query: string): void {
+    this.isLoading = true;
+    this.pokemonList = [];
+
     this.pokemonService.getPokemonByQuery(query).subscribe((pokemonList) => {
+      this.isLoading = false;
       this.pokemonList = pokemonList;
+    });
+  }
+
+  private logger(message: string): void {
+    console.log(message, {
+      loading: this.isLoading,
+      pokemonLenght: this.pokemonList.length,
     });
   }
 }
